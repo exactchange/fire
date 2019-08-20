@@ -1,4 +1,4 @@
-const { ƒ } = require('../..');
+const { ƒ } = require('../../..');
 const { Dashboard } = require('../actions/Dashboard');
 const { Ping } = require('../actions/Ping');
 const { User } = require('../actions/User');

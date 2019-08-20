@@ -1,4 +1,4 @@
-const { ƒ } = require('../..');
+const { ƒ } = require('../../..');
 
 /*
  * AnalyticsSettings
@@ -11,11 +11,13 @@ class AnalyticsSettings extends ƒ.Action {
     this.setShape({
       isEnabled: ƒ.Type.Boolean
     });
+
+    this.setReadWriteDelete(true, true, false);
   }
 
   didPut(params) {
     if (params.isEnabled === true || params.isEnabled === false) {
-      console.log(`${params.isEnabled ? 'Enabled' : 'Disabled'} analytics!`);
+      console.log(`A user ${params.isEnabled ? 'enabled' : 'disabled'} analytics.`);
     }
   }
 }

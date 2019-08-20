@@ -1,0 +1,14 @@
+{
+  "name": "fire-backend-example-todo-list-api",
+  "author": "@exactchange",
+  "description": "A todo list API example with Fire",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "node start",
+    "test": "node test"
+  },
+  "dependencies": {
+    "fire-backend-test": "1.0.1"
+  },
+  "devDependencies": {}
+}

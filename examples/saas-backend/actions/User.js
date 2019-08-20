@@ -1,4 +1,4 @@
-const { ƒ } = require('../..');
+const { ƒ } = require('../../..');
 
 /*
  * User
@@ -10,13 +10,17 @@ class User extends ƒ.Action {
 
     this.setShape({
       age: ƒ.Type.Integer,
-      name: ƒ.Type.String,
-      bio: ƒ.Type.String
+      bio: ƒ.Type.String,
+      name: ƒ.Type.String
     });
   }
 
+  didDelete(params) {
+    // do stuff after data was deleted
+  }
+
   didGet(params) {
-    // do stuff after data was returned
+    // do stuff after data was retrieved
   }
 
   didPut(params) {

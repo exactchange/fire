@@ -1,4 +1,4 @@
-const { ƒ } = require('../..');
+const { ƒ } = require('../../..');
 
 /*
  * Ping
@@ -15,6 +15,8 @@ class Ping extends ƒ.Action {
     this.setState({
       message: '👍'
     });
+
+    this.setReadWriteDelete(true, false, false);
   }
 
   didGet(params) {

@@ -22,23 +22,6 @@ const runTests = async () => {
       {
         tipOfTheDay: 'Press ESC to enter distraction-free mode.',
         isEnabled: {},
-        todos: [
-          { title: 'Do stuff', isComplete: false },
-          { title: 'Day dream', isComplete: true }
-        ],
-        status: 200
-      }
-    );
-
-    await it('retrieves todos',
-      {
-        url: 'http://localhost:1337/dashboard/todos'
-      },
-      {
-        todos: [
-          { title: 'Do stuff', isComplete: false },
-          { title: 'Day dream', isComplete: true }
-        ],
         status: 200
       }
     );

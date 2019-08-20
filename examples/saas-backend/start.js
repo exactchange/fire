@@ -2,7 +2,7 @@
  * Instantiate
  */
 
-const { ƒ } = require('..');
+const { ƒ } = require('../../');
 const { Node } = require('./node');
 
 const node = new Node();
