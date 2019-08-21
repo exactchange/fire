@@ -1,4 +1,4 @@
-# Fire (ƒ) &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/exactchange/fire/blob/master/LICENSE) [![npm version](https://img.shields.io/badge/npm-v1.0.1-brightgreen)](https://www.npmjs.com/package/fire-backend)
+# Fire (ƒ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/exactchange/fire/blob/master/LICENSE) [![npm version](https://img.shields.io/badge/npm-v1.0.1-brightgreen)](https://www.npmjs.com/package/fire-backend)
 
 Fire is a library for backend JavaScript.
 
@@ -11,22 +11,6 @@ Fire is a library for backend JavaScript.
 Although Fire is not opinionated about front-end interfaces, for full-stack developers it's a great backend choice for React interfaces because it is written in a modern ES6 way, and adheres to the functional-state paradigm:
 
 #### The Functional Loop
-
-![Functional Loop](https://i.ibb.co/VtfvS8f/3-Fire-Loop-React-Server-DB.png)
-
-#### Vanilla (client only)
-
-![Vanilla Client](https://i.ibb.co/rkc2jcW/0-Fire-Loop-Vanilla-Client.png)
-
-#### React (client only)
-
-![React Client](https://i.ibb.co/YfJLgGw/1-Fire-Loop-React-Client.png)
-
-#### React/Fire (no database)
-
-![React Client Fire Server](https://i.ibb.co/gRdQZYt/2-Fire-Loop-React-Server.png)
-
-#### React/Fire/Mongo
 
 ![Functional Loop](https://i.ibb.co/VtfvS8f/3-Fire-Loop-React-Server-DB.png)
 
