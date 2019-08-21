@@ -125,7 +125,7 @@ class Component {
       return false;
     }
 
-     Object.keys(state).map(k => {
+    Object.keys(state).map(k => {
       const isKeyed = _getClassNameByInstance(this) !== 'Node' && this.path.includes(':');
       const key = (isKeyed && state[k][Object.keys(state[k])[0]]) || state[k];
       const actualType = _getClassNameByInstance(key);
