@@ -6,7 +6,7 @@ Fire is a library for backend JavaScript.
 
 * **State-Based:** Build encapsulated Actions that manage their own state, then compose them to make complex APIs. Because the application state can be derived from the state of all Actions, there is no need to create a database schema, or set up an initial database – Fire generates the database, and maintains the state of it as Actions are fired.
 
-* **Learn Once, Write Anywhere:** Fire doesn't make assumptions about your application's front-end, so you can develop new features in Fire with your existing front-end code. Fire can also be used along-side many other Fire Nodes in a service network, sharing state information while retaining a single source of truth.
+* **Write Anywhere:** Fire doesn't make assumptions about your application's front-end, so you can develop new features in Fire with your existing front-end code. Fire can also be used along-side many other Fire Nodes in a service network, sharing state information while retaining a single source of truth.
 
 Although Fire is not opinionated about front-end interfaces, for full-stack developers it's a great backend choice for React interfaces because it is written in a modern ES6 way, and adheres to the functional-state paradigm:
 
