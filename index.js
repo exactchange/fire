@@ -84,15 +84,6 @@ class Component {
     return Object.assign(this.__state, ...this.actions.map(r => r.state) || {});
   }
 
-  createAction(action) {
-    if (Array.isArray(action)) {
-      action.forEach(a => this.actions.push(a));
-    }
-    else {
-      this.actions.push(action);
-    }
-  }
-
   getAction(path) {
     const isTopLevel = (path.match(/\//gi).length === 1);
     const p = isTopLevel ? path : path.split('/');
@@ -101,6 +92,15 @@ class Component {
     const matchedRoutes = routes.filter(r => route.match(r.split(':')[0]));
 
     return this.actions.filter(a => a.path.split(':')[0] === route)[0];
+  }
+
+  setActions(action) {
+    if (Array.isArray(action)) {
+      action.forEach(a => this.actions.push(a));
+    }
+    else {
+      this.actions.push(action);
+    }
   }
 
   setShape(shape) {

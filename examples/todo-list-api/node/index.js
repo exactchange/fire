@@ -18,7 +18,7 @@ class Node extends ƒ.Node {
       startedAt: Date.now()
     });
 
-    this.createAction([
+    this.setActions([
       new Ping('/'),
       new Todos('/todos')
     ]);
