@@ -7,7 +7,7 @@ const runTests = async () => {
   try {
     await it('pings the API',
       {
-        url: 'http://localhost:1337/',
+        url: 'http://localhost:1337/'
       },
       {
         message: '👍',

@@ -18,10 +18,10 @@ class Node extends ƒ.Node {
       startedAt: Date.now()
     });
 
-    this.actions = [
+    this.createAction([
       new Ping('/'),
       new Todos('/todos')
-    ];
+    ]);
   }
 }
 

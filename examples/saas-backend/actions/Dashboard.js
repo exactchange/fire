@@ -19,9 +19,7 @@ class Dashboard extends ƒ.Action {
 
     this.setReadWriteDelete(true, false, false);
 
-    this.createAction([
-      new AnalyticsSettings(`${path}/analytics/enable/:key`)
-    ]);
+    this.createAction(new AnalyticsSettings(`${path}/analytics/enable/:key`));
   }
 
   didGet(params) {

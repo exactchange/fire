@@ -19,11 +19,11 @@ class Node extends ƒ.Node {
       startedAt: Date.now()
     });
 
-    this.actions = [
+    this.createAction([
       new Ping('/'),
       new Dashboard('/dashboard'),
       new User('/user/:key')
-    ];
+    ]);
   }
 }
 
