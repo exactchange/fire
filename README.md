@@ -18,34 +18,43 @@ Although Fire is not opinionated about front-end interfaces, for full-stack deve
 
 Install MongoDB:
 ```
-> brew install mongodb
+brew install mongodb
 ```
 
 Create a data directory:
 ```
-> mkdir -p /data/db
+mkdir -p /data/db
 ```
 
 Ensure write permissions to `/data/db`:
 
 ```
-> sudo chown -R `id -un` /data/db
-> # Enter your password
+sudo chown -R `id -un` /data/db
+# Enter your password
 ```
 
 Install Fire:
 ```
-> npm install fire-backend
+npm install fire-backend
 ```
 
 Run an example project:
 ```
-> cd examples/todo-list-api && npm install && npm start
+cd examples/todo-list-api
+npm install
+npm start
+```
+
+Run an example project without a database:
+```
+cd examples/todo-list-api
+npm install
+node start --skip-db
 ```
 
 Stop database background process:
 ```
-> npm stop
+npm stop
 ```
 
 ## Documentation
