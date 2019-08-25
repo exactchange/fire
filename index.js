@@ -207,7 +207,7 @@ const ƒ = {
       super();
 
       const { version } = ƒ.system.node;
-      const startMessage = `\x1b[32m<< ${new Date().toString()} >> Fire v${'1.0.1'} is running on Node.js ${version} (V8 v${v8}).\x1b[0m`;
+      const startMessage = `\x1b[32m<< ${new Date().toString()} >> Fire v${'1.0.4'} is running on Node.js ${version} (V8 v${v8}).\x1b[0m`;
       const httpApi = new HttpApi(startMessage);
       const mongoClient = require('mongodb').MongoClient;
       const mongoOptions = {

@@ -1,4 +1,4 @@
-# Fire (ƒ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/exactchange/fire/blob/master/LICENSE) [![npm version](https://img.shields.io/badge/npm-v1.0.3-brightgreen)](https://www.npmjs.com/package/fire-backend)
+# Fire (ƒ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/exactchange/fire/blob/master/LICENSE) [![npm version](https://img.shields.io/badge/npm-v1.0.4-brightgreen)](https://www.npmjs.com/package/fire-backend)
 
 Fire is a library for backend JavaScript.
 
@@ -40,7 +40,7 @@ Install Fire:
 
 Run an example project:
 ```
-> cd examples/saas-backend && npm install && npm start
+> cd examples/todo-list-api && npm install && npm start
 ```
 
 Stop database background process:
@@ -54,7 +54,7 @@ Coming soon.
 
 ## Examples
 
-Here: [/examples](https://github.com/exactchange/fire/tree/master/examples)
+Take a look at the [/examples](https://github.com/exactchange/fire/tree/master/examples).
 
 Here is a basic API example to get you started:
 
