@@ -26,16 +26,16 @@ Create a data directory:
 > mkdir -p /data/db
 ```
 
-Install Fire:
-```
-> npm install fire-backend
-```
-
 Ensure write permissions to `/data/db`:
 
 ```
 > sudo chown -R `id -un` /data/db
 > # Enter your password
+```
+
+Install Fire:
+```
+> npm install fire-backend
 ```
 
 Run an example project:
