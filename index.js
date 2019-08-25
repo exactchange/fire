@@ -107,11 +107,11 @@ class Component {
   setShape(shape) {
     const state = {};
 
-    this.__shape = {};
+    this.__shape = this.shape || {};
 
     Object.keys(shape).forEach(k => {
       this.__shape[k] = shape[k];
-      state[k] = {};
+      state[k] = this.state.hasOwnProperty(k) ? this.state[k] : {};
     });
 
     this.setState(state);
@@ -147,10 +147,11 @@ class Component {
 
       if (ƒ.root.getNode().db) {
         try {
+          const version = ƒ.root.getNode().state.dbVersion;
           const collection = await ƒ.root.getNode().db.collection('state');
 
           collection.updateOne(
-            { version: 1 },
+            { version },
             { $set: { state: appState } }
           );
 
@@ -214,7 +215,7 @@ const ƒ = {
         useUnifiedTopology: true
       };
 
-      mongoClient.connect('mongodb://localhost:27017', mongoOptions, this.databaseDidConnect.bind(this));
+      mongoClient.connect('mongodb://localhost:27017', mongoOptions, (...args) => this.databaseDidConnect(...args));
 
       httpApi.onDelete = httpApi.onDelete.bind(this);
       httpApi.onGet = httpApi.onGet.bind(this);
@@ -244,8 +245,9 @@ const ƒ = {
       console.log(`\x1b[32m<< ${date} >> Connected to "${this.db.databaseName}".\x1b[0m`);
       ƒ.system.mongo.nodeVersion = this.db.serverConfig.clientInfo.platform;
 
+      const { dbVersion } = this.state;
       const collection = await this.db.collection('state');
-      const savedState = await collection.findOne({ version: 1 });
+      const savedState = await collection.findOne({ version: dbVersion });
 
       if (!savedState) {
         console.log(`\x1b[33m<< ${date} >> Database exception. Failed to load a collection: "state". Creating one from scratch...\x1b[0m`);
@@ -261,7 +263,7 @@ const ƒ = {
           console.log(`\x1b[32m<< ${date} >> Database updated. Created a collection: "state".\x1b[0m`);
 
           try {
-            await res.insertOne({ version: 1, state: this.state });
+            await res.insertOne({ version: dbVersion, state: this.state });
           } catch (e) {
             console.log(`\x1b[31m<< ${date} >> Database error. Failed to save data to collection: "state".\x1b[0m`);
             console.log(`\x1b[31m${e}\x1b[0m`);
@@ -276,9 +278,17 @@ const ƒ = {
           this.actions.forEach(a => a.syncState());
         }
       }
+
+      return await this.didLoad();
     }
 
-    didLoad() {
+    async didLoad() {
+      const { dbVersion } = this.state;
+      const collection = await this.db.collection('state');
+      const documentCount = await collection.countDocuments();
+
+      this.setState({ dbVersion: (Math.max(1, ((dbVersion << 0) || documentCount))).toString() });
+
       return this;
     }
 
