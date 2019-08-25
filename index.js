@@ -23,7 +23,7 @@ const {
  * HttpApi
  */
 
-const NodeExpressApi = require('./node_modules/node-express-api');
+const NodeExpressApi = require('node-express-api');
 
 class HttpApi extends NodeExpressApi {
   constructor(startMessage) {

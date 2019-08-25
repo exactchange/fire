@@ -2,7 +2,7 @@
   "name": "fire-backend-example-todo-list-api",
   "author": "@exactchange",
   "description": "A todo list API example with Fire",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "restart": "npm stop && npm start",
     "start": "mongod --fork --syslog && node start",
@@ -10,7 +10,6 @@
     "test": "node test"
   },
   "dependencies": {
-    "fire-backend-test": "1.0.1"
-  },
-  "devDependencies": {}
+    "fire-backend-test": "^1.0.2"
+  }
 }

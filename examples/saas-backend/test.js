@@ -1,4 +1,4 @@
-const smoke = require('./node_modules/fire-backend-test');
+const smoke = require('fire-backend-test');
 const { it } = smoke;
 
 const skipTests = false;
