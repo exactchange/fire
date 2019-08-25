@@ -207,15 +207,21 @@ const ƒ = {
       super();
 
       const { version } = ƒ.system.node;
-      const startMessage = `\x1b[32m<< ${new Date().toString()} >> Fire v${'1.0.4'} is running on Node.js ${version} (V8 v${v8}).\x1b[0m`;
+      const startMessage = `\x1b[32m<< ${new Date().toString()} >> Fire v${'1.0.6'} is running on Node.js ${version} (V8 v${v8}).\x1b[0m`;
       const httpApi = new HttpApi(startMessage);
-      const mongoClient = require('mongodb').MongoClient;
-      const mongoOptions = {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      };
 
-      mongoClient.connect('mongodb://localhost:27017', mongoOptions, (...args) => this.databaseDidConnect(...args));
+      if (ƒ.root.args.join('').match('--skip-db') == null) {
+        const mongoClient = require('mongodb').MongoClient;
+        const mongoOptions = {
+          useNewUrlParser: true,
+          useUnifiedTopology: true
+        };
+
+        mongoClient.connect('mongodb://localhost:27017', mongoOptions, (...args) => this.databaseDidConnect(...args));
+      }
+      else {
+        console.log(`\x1b[33m<< ${new Date().toString()} >> With flags: "--skip-db"\x1b[0m`);
+      }
 
       httpApi.onDelete = httpApi.onDelete.bind(this);
       httpApi.onGet = httpApi.onGet.bind(this);
