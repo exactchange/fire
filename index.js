@@ -26,8 +26,9 @@ const {
 const NodeExpressApi = require('./node_modules/node-express-api');
 
 class HttpApi extends NodeExpressApi {
-  constructor() {
+  constructor(startMessage) {
     const options = {
+      startMessage,
       redirectToHttps: true
     };
 
@@ -116,7 +117,7 @@ class Component {
     this.setState(state);
   }
 
-  setState(state) {
+  async setState(state) {
     let isValidType = true;
 
     if (Object.keys(state).map(k => Object.keys(this.shape || {}).includes(k)).includes(false)) {
@@ -139,7 +140,26 @@ class Component {
 
     if (isValidType) {
       this.__state = Object.assign(Object.assign(this.state, state), ...this.actions.map(r => r.state) || {});
-      ƒ.root.getNode().__state = Object.assign(ƒ.root.getNode().state || {}, this.__state);
+
+      const appState = Object.assign(ƒ.root.getNode().state || {}, this.__state);
+
+      ƒ.root.getNode().__state = appState;
+
+      if (ƒ.root.getNode().db) {
+        try {
+          const collection = await ƒ.root.getNode().db.collection('state');
+
+          collection.updateOne(
+            { version: 1 },
+            { $set: { state: appState } }
+          );
+
+          console.log(`\x1b[32m<< ${new Date().toString()} >> Database collection updated: "state".\x1b[0m`);
+        } catch (error) {
+          console.log(`\x1b[31m<< ${new Date().toString()} >> Database error.\x1b[0m`);
+          console.log(`\x1b[31m${error}\x1b[0m`);
+        }
+      }
     }
 
     return isValidType;
@@ -174,12 +194,27 @@ const ƒ = {
       this.canRead = arguments.length > 0 ? canRead : this.canRead;
       this.canWrite = arguments.length > 1 ? canWrite : this.canWrite;
     }
+
+    syncState() {
+      Object.keys(this.shape).forEach(k => {
+        this.state[k] = ƒ.root.getNode().__state[k];
+      });
+    }
   },
   Node: class extends Component {
     constructor() {
       super();
 
-      const httpApi = new HttpApi();
+      const { version } = ƒ.system.node;
+      const startMessage = `\x1b[32m<< ${new Date().toString()} >> Fire v${'1.0.1'} is running on Node.js ${version} (V8 v${v8}).\x1b[0m`;
+      const httpApi = new HttpApi(startMessage);
+      const mongoClient = require('mongodb').MongoClient;
+      const mongoOptions = {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+      };
+
+      mongoClient.connect('mongodb://localhost:27017', mongoOptions, this.databaseDidConnect.bind(this));
 
       httpApi.onDelete = httpApi.onDelete.bind(this);
       httpApi.onGet = httpApi.onGet.bind(this);
@@ -189,13 +224,61 @@ const ƒ = {
       ƒ.root.getNode = () => this;
     }
 
+    get db() {
+      return this.__db;
+    }
+
+    async databaseDidConnect(error, client) {
+      const date = new Date().toString();
+
+      if (error) {
+        console.log(`\x1b[31m<< ${date} >> Database connection error.\x1b[0m`);
+        console.log(`\x1b[31m${error}\x1b[0m`);
+
+        return false;
+      }
+
+      this.__db = await client.db('firedb');
+
+      console.log(`\x1b[32m<< ${date} >> MongoDB Node driver v${this.db.serverConfig.clientInfo.driver.version} is running on ${this.db.serverConfig.clientInfo.platform} (V8).\x1b[0m`);
+      console.log(`\x1b[32m<< ${date} >> Connected to "${this.db.databaseName}".\x1b[0m`);
+      ƒ.system.mongo.nodeVersion = this.db.serverConfig.clientInfo.platform;
+
+      const collection = await this.db.collection('state');
+      const savedState = await collection.findOne({ version: 1 });
+
+      if (!savedState) {
+        console.log(`\x1b[33m<< ${date} >> Database exception. Failed to load a collection: "state". Creating one from scratch...\x1b[0m`);
+
+        this.db.createCollection('state', async (err, res) => {
+          if (err) {
+            console.log(`\x1b[31m<< ${date} >> Database error. Failed to create a collection: "state".\x1b[0m`);
+            console.log(`\x1b[31m${err}\x1b[0m`);
+
+            return false;
+          }
+
+          console.log(`\x1b[32m<< ${date} >> Database updated. Created a collection: "state".\x1b[0m`);
+
+          try {
+            await res.insertOne({ version: 1, state: this.state });
+          } catch (e) {
+            console.log(`\x1b[31m<< ${date} >> Database error. Failed to save data to collection: "state".\x1b[0m`);
+            console.log(`\x1b[31m${e}\x1b[0m`);
+          };
+
+          client.close();
+        });
+      }
+      else {
+        if (Object.keys(savedState.state).join('') === Object.keys(this.state).join('')) {
+          this.__state = savedState.state;
+          this.actions.forEach(a => a.syncState());
+        }
+      }
+    }
+
     didLoad() {
-      const { startedAt } = this.state;
-      const { version } = ƒ.system.node;
-      const date = new Date(startedAt);
-
-      console.log(`\x1b[32m<< ${date.toString()} >> Node ${version} is running on V8 v${v8} (Chromium).\x1b[0m`);
-
       return this;
     }
 
@@ -400,6 +483,9 @@ const ƒ = {
       version: v8
     },
     language: LANG,
+    mongo: {
+      nodeVersion: ''
+    },
     node: {
       bindings: moduleLoadList.map(m => m.match('Binding') && m.replace(/Binding /gi, '')).filter(m => m),
       modules: moduleLoadList.map(m => m.match('NativeComponent') && m.replace(/NativeComponent /gi, '')).filter(m => m),
