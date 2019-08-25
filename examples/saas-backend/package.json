@@ -2,9 +2,10 @@
   "name": "fire-backend-example-saas-backend",
   "author": "@exactchange",
   "description": "A web app backend example with Fire",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
-    "start": "node start",
+    "start": "mongod --fork --syslog && node start",
+    "stop": "pkill mongod",
     "test": "node test"
   },
   "dependencies": {
