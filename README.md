@@ -16,7 +16,37 @@ Although Fire is not opinionated about front-end interfaces, for full-stack deve
 
 ## Installation
 
-`npm install fire-backend`
+Install MongoDB:
+```
+> brew install mongodb
+```
+
+Create a data directory:
+```
+> mkdir -p /data/db
+```
+
+Install Fire:
+```
+> npm install fire-backend
+```
+
+Ensure write permissions to `/data/db`:
+
+```
+> sudo chown -R `id -un` /data/db
+> # Enter your password
+```
+
+Run an example project:
+```
+> cd examples/saas-backend && npm install && npm start
+```
+
+Stop database background process:
+```
+> npm stop
+```
 
 ## Documentation
 
