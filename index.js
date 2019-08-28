@@ -26,6 +26,48 @@ const {
 const NodeExpressApi = require('node-express-api');
 
 class HttpApi extends NodeExpressApi {
+  static _200(res, state) {
+    console.log(`\x1b[32m<< ${new Date().toString()} >> Sent (200 Response).\x1b[0m`);
+
+    return res.status(200).json(state);
+  }
+
+  static _400(res) {
+    console.log(`\x1b[31m<< ${new Date().toString()} >> Type mismatch (400 Response).\x1b[0m`);
+
+    return res.status(400).send({
+      error: {
+        message: 'Type mismatch.',
+        type: 'Bad Request'
+      },
+      status: 400
+    });
+  }
+
+  static _404(res) {
+    console.log(`\x1b[31m<< ${new Date().toString()} >> Action not found (404 Response).\x1b[0m`);
+
+    return res.status(404).send({
+      error: {
+        message: 'Action not found.',
+        type: 'Not Found'
+      },
+      status: 404
+    });
+  }
+
+  static _500(res) {
+    console.log(`\x1b[31m<< ${new Date().toString()} >> Uncaught error (500 Response).\x1b[0m`);
+
+    res.status(500).send({
+      error: {
+        message: 'Uncaught error.',
+        type: 'Server Error'
+      },
+      status: 500
+    });
+  }
+
   constructor(startMessage) {
     const options = {
       startMessage,
@@ -42,20 +84,71 @@ class HttpApi extends NodeExpressApi {
     super(requests, options);
   }
 
-  onDelete(req, res) {
-    this.willDelete(req, res);
+  async onDelete(req, res) {
+    const { body, params } = req;
+    const path = params[0];
+    const action = this.getAction(path);
+
+    const state = await this.willDelete(action, params, body);
+
+    switch (state.status) {
+      case 200:
+        action.didDelete(body);
+
+        return HttpApi._200(res, state);
+      case 400:
+        return HttpApi._400(res);
+      case 404:
+        return HttpApi._404(res);
+      default:
+        return HttpApi._500(res);
+    }
   }
 
-  onGet(req, res) {
-    this.willGet(req, res);
+  async onGet(req, res) {
+    const { params } = req;
+    const path = params[0];
+    const action = this.getAction(path);
+
+    const state = await this.willGet(action, params);
+
+    switch (state.status) {
+      case 200:
+        action.didGet(params);
+
+        return HttpApi._200(res, state);
+      case 404:
+        return HttpApi._404(res);
+      default:
+        return HttpApi._500(res);
+    }
   }
 
-  onPost(req, res) {
-    this.willPost(req, res);
+  async onPost(req, res) {
+    this.onPut(req, res);
   }
 
-  onPut(req, res) {
-    this.willPut(req, res);
+  async onPut(req, res) {
+    const { body, params } = req;
+    const path = params[0];
+    const action = this.getAction(path);
+
+    const state = await this.willPut(action, params, body);
+
+    switch (state.status) {
+      case 200:
+        action.didPut(body);
+
+        return HttpApi._200(res, state);
+      case 400:
+        return HttpApi._400(res);
+      case 404:
+        return HttpApi._404(res);
+      default:
+        return HttpApi._500(res);
+    }
+
+    return false;
   }
 }
 
@@ -91,8 +184,21 @@ class Component {
     const route = isTopLevel ? path : path.split(p[p.length - 1])[0];
     const routes = this.actions.map(a => a.path);
     const matchedRoutes = routes.filter(r => route.match(r.split(':')[0]));
+    let action = this.actions.filter(a => a.path.split(':')[0] === route)[0];
 
-    return this.actions.filter(a => a.path.split(':')[0] === route)[0];
+    if (!action) {
+      const p = path.split('/');
+
+      p.splice(2);
+      action = this.getAction(p.join('/')) && this.getAction(p.join('/')).actions.find(a => {
+        const actionPath = a.path.replace(':key', '');
+        const requestPath = path.replace(path.split('/')[path.split('/').length - (a.path.includes(':key') ? 1 : 0)], '');
+
+        return actionPath === requestPath;
+      });
+    }
+
+    return action || {};
   }
 
   setActions(action) {
@@ -155,7 +261,7 @@ class Component {
             { $set: { state: appState } }
           );
 
-          console.log(`\x1b[32m<< ${new Date().toString()} >> Database collection updated: "state".\x1b[0m`);
+          console.log(`\x1b[32m<< ${new Date().toString()} >> Node state updated.\x1b[0m`);
         } catch (error) {
           console.log(`\x1b[31m<< ${new Date().toString()} >> Database error.\x1b[0m`);
           console.log(`\x1b[31m${error}\x1b[0m`);
@@ -207,7 +313,7 @@ const ƒ = {
       super();
 
       const { version } = ƒ.system.node;
-      const startMessage = `\x1b[32m<< ${new Date().toString()} >> Fire v${'1.0.6'} is running on Node.js ${version} (V8 v${v8}).\x1b[0m`;
+      const startMessage = `\x1b[32m<< ${new Date().toString()} >> Fire v${ƒ.version} is running on Node.js ${version} (V8 v${v8}).\x1b[0m`;
       const httpApi = new HttpApi(startMessage);
 
       if (ƒ.root.args.join('').match('--skip-db') == null) {
@@ -298,27 +404,12 @@ const ƒ = {
       return this;
     }
 
-    willDelete(req, res) {
-      const { params } = req;
+    willDelete(action, params, body) {
       const path = params[0];
-      let action = this.getAction(path);
-      let body = {};
 
-      if (!action) {
-        const p = path.split('/');
-
-        p.splice(2);
-        action = this.getAction(p.join('/')) && this.getAction(p.join('/')).actions.find(a => {
-          const actionPath = a.path.replace(':key', '');
-          const requestPath = path.replace(path.split('/')[path.split('/').length - (a.path.includes(':key') ? 1 : 0)], '');
-
-          return actionPath === requestPath;
-        });
-      }
-
-      if (action && action.canDelete) {
+      if (action.canDelete) {
         const key = action.path.includes(':') && path.replace(action.path.split(':')[0], '').split('/')[0];
-        const only = req.body.only || Object.keys(action.state);
+        const only = body.only || Object.keys(action.state);
 
         only.forEach(k => {
           if (key && action.state.hasOwnProperty(k) && action.state[k].hasOwnProperty(key)) {
@@ -331,43 +422,20 @@ const ƒ = {
           }
         });
 
-        res.status(200).send({
-          status: 200,
-          timestamp: Date.now()
-        });
-
-        return action.didDelete(req.params);
+        return {
+          status: 200
+        };
       }
 
-      console.log(`\x1b[31m<< ${new Date().toString()} >> Action not found.\x1b[0m`);
-
-      res.status(404).send({
-        error: {
-          message: 'Action not found.',
-          type: 'Not Found'
-        },
+      return {
         status: 404
-      });
+      };
     }
 
-    willGet(req, res) {
-      const { params } = req;
+    willGet(action, params) {
       const path = params[0];
-      let action = this.getAction(path);
 
-      if (!action) {
-        const p = path.split('/');
-
-        p.splice(2);
-        action = this.getAction(p.join('/')) && this.getAction(p.join('/')).actions.find(a => {
-          const actionPath = a.path.replace(':key', '');
-          const requestPath = path.replace(path.split('/')[path.split('/').length - (a.path.includes(':key') ? 1 : 0)], '');
-
-          return actionPath === requestPath;
-        });
-      }
-
-      if (action && action.canRead) {
+      if (action.canRead) {
         const key = action.path.includes(':') && path.replace(action.path.split(':')[0], '').split('/')[0];
         const state = {
           timestamp: Date.now()
@@ -379,50 +447,24 @@ const ƒ = {
           }
         });
 
-        state.status = 200;
-        res.status(200).json(state);
+        return {
+          ...state,
 
-        return action.didGet(params);
+          status: 200
+        };
       }
 
-      console.log(`\x1b[31m<< ${new Date().toString()} >> Action not found.\x1b[0m`);
-
-      res.status(404).send({
-        error: {
-          message: 'Action not found.',
-          type: 'Not Found'
-        },
+      return {
         status: 404
-      });
+      };
     }
 
-    willPost(req, res) {
-      return this.willPut(req, res);
-    }
-
-    willPut(req, res) {
-      const { params } = req;
+    willPut(action, params, body) {
       const path = params[0];
-      let action = this.getAction(path);
-      let body = {};
 
-      if (!action) {
-        const p = path.split('/');
-
-        p.splice(2);
-        action = this.getAction(p.join('/')) && this.getAction(p.join('/')).actions.find(a => {
-          const actionPath = a.path.replace(':key', '');
-          const requestPath = path.replace(path.split('/')[path.split('/').length - (a.path.includes(':key') ? 1 : 0)], '');
-
-          return actionPath === requestPath;
-        });
-      }
-
-      if (action && action.canWrite) {
+      if (action.canWrite) {
         const key = action.path.includes(':') && path.replace(action.path.split(':')[0], '').split('/')[0];
         const state = {};
-
-        body = req.body;
 
         Object.keys(action.state).filter(s => body.hasOwnProperty(s)).forEach(k => {
           const currentValue = (key ? action.state[k][key] : action.state[k]);
@@ -438,33 +480,20 @@ const ƒ = {
         });
 
         if (Object.keys(state).length > 0 && action.setState(Object.assign({}, ...Object.keys(state).map(k => ({ [k]: state[k] || {} }))))) {
-          res.status(200).send({
+          return {
             status: 200,
             timestamp: Date.now()
-          });
-
-          return action.didPut(body);
+          };
         }
 
-        res.status(400).send({
-          error: {
-            message: 'Type mismatch.',
-            type: 'Bad Request'
-          },
+        return {
           status: 400
-        });
+        };
       }
-      else {
-        console.log(`\x1b[31m<< ${new Date().toString()} >> Action not found.\x1b[0m`);
 
-        res.status(404).send({
-          error: {
-            message: 'Action not found.',
-            type: 'Not Found'
-          },
-          status: 404
-        });
-      }
+      return {
+        status: 404
+      };
     }
   },
   Type: {
@@ -507,7 +536,8 @@ const ƒ = {
       modules: moduleLoadList.map(m => m.match('NativeComponent') && m.replace(/NativeComponent /gi, '')).filter(m => m),
       version
     }
-  }
+  },
+  version: '1.0.7'
 };
 
 /*

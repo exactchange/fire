@@ -12,7 +12,7 @@ Although Fire is not opinionated about front-end interfaces, for full-stack deve
 
 #### The Functional Loop
 
-![Functional Loop](https://i.ibb.co/VtfvS8f/3-Fire-Loop-React-Server-DB.png)
+![Functional Loop](https://drive.google.com/uc?export=download&id=1-1g_VoyYBXoipT5A7AZWAK39JeOhvL3u)
 
 ## Installation
 
