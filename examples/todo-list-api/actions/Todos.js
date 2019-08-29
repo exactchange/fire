@@ -14,8 +14,9 @@ class Todos extends ƒ.Action {
 
     this.setState({
       todos: [
-        { title: 'Do stuff', userId: '123', isComplete: false },
-        { title: 'Day dream', userId: '456', isComplete: true }
+        { title: 'Go to the gym', isComplete: false },
+        { title: 'Finish work presentation', isComplete: false },
+        { title: 'Day dream', isComplete: true }
       ]
     });
   }

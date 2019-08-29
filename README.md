@@ -1,4 +1,4 @@
-# Fire (ƒ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/exactchange/fire/blob/master/LICENSE) [![npm version](https://img.shields.io/badge/npm-v1.0.7-brightgreen)](https://www.npmjs.com/package/fire-backend)
+# Fire (ƒ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/exactchange/fire/blob/master/LICENSE) [![npm version](https://img.shields.io/badge/npm-v1.1.0-brightgreen)](https://www.npmjs.com/package/fire-backend)
 
 Fire is a library for backend JavaScript.
 
@@ -34,18 +34,11 @@ Install Fire:
 npm install fire-backend
 ```
 
-Run an example project:
+#### Run an example project:
 ```
 cd examples/todo-list-api
 npm install
 npm start
-```
-
-Run an example project without a database:
-```
-cd examples/todo-list-api
-npm install
-node start --skip-db
 ```
 
 Stop database background process:
@@ -53,17 +46,30 @@ Stop database background process:
 npm stop
 ```
 
+#### Database versioning
+
+To run a project with a different version of the database, append the npm `start` script with:
+```
+dbVersion=2
+```
+and a new instance of the state-database will be created on node start. Easily switch between versions using the `dbVersion` flag, with any version name you like as the value.
+
+#### API only
+
+To run a project without a database, append the npm `start` script with:
+```
+--skip-db
+```
+
 ## Documentation
 
-Coming soon.
+Coming soon
 
 #### The Functional Loop
 
 ![Functional Loop](https://drive.google.com/uc?export=download&id=1-1g_VoyYBXoipT5A7AZWAK39JeOhvL3u)
 
-## Examples
-
-Take a look at the [/examples](https://github.com/exactchange/fire/tree/master/examples).
+## [Examples](https://github.com/exactchange/fire/tree/master/examples)
 
 Here is a basic API example to get you started:
 
@@ -82,8 +88,9 @@ class Todos extends ƒ.Action {
 
     this.setState({
       todos: [
-        { title: 'Do stuff', userId: '123', isComplete: false },
-        { title: 'Day dream', userId: '456', isComplete: true }
+        { title: 'Go to the gym', isComplete: false },
+        { title: 'Finish work presentation', isComplete: false },
+        { title: 'Day dream', isComplete: true }
       ]
     });
   }
