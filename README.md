@@ -10,10 +10,6 @@ Fire is a library for backend JavaScript.
 
 Although Fire is not opinionated about front-end interfaces, for full-stack developers it's a great backend choice for React interfaces because it is written in a modern ES6 way, and adheres to the functional-state paradigm:
 
-#### The Functional Loop
-
-![Functional Loop](https://drive.google.com/uc?export=download&id=1-1g_VoyYBXoipT5A7AZWAK39JeOhvL3u)
-
 ## Installation
 
 Install MongoDB:
@@ -60,6 +56,10 @@ npm stop
 ## Documentation
 
 Coming soon.
+
+#### The Functional Loop
+
+![Functional Loop](https://drive.google.com/uc?export=download&id=1-1g_VoyYBXoipT5A7AZWAK39JeOhvL3u)
 
 ## Examples
 
