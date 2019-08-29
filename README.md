@@ -8,8 +8,6 @@ Fire is a library for backend JavaScript.
 
 * **Use Everywhere:** Fire doesn't make assumptions about your application's front-end, so you can develop new features in Fire with your existing front-end code. Fire can also be used along-side many other Fire Nodes in a service network, sharing state information while retaining a single source of truth.
 
-Although Fire is not opinionated about front-end interfaces, for full-stack developers it's a great backend choice for React interfaces because it is written in a modern ES6 way, and adheres to the functional-state paradigm:
-
 ## Installation
 
 Install MongoDB:
