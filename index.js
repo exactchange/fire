@@ -93,7 +93,7 @@ class HttpApi extends NodeExpressApi {
 
     switch (state.status) {
       case 200:
-        action.didDelete(body);
+        await action.didDelete(body);
 
         return HttpApi._200(res, state);
       case 400:
@@ -114,7 +114,7 @@ class HttpApi extends NodeExpressApi {
 
     switch (state.status) {
       case 200:
-        action.didGet(params);
+        await action.didGet(params);
 
         return HttpApi._200(res, state);
       case 404:
@@ -137,7 +137,7 @@ class HttpApi extends NodeExpressApi {
 
     switch (state.status) {
       case 200:
-        action.didPut(body);
+        await action.didPut(body);
 
         return HttpApi._200(res, state);
       case 400:
@@ -190,7 +190,10 @@ class Component {
       const p = path.split('/');
 
       p.splice(2);
-      action = this.getAction(p.join('/')) && this.getAction(p.join('/')).actions.find(a => {
+
+      const parentPath = p.join('/');
+
+      action = parentPath && this.getAction(parentPath) && this.getAction(parentPath).actions.find(a => {
         const actionPath = a.path.replace(':key', '');
         const requestPath = path.replace(path.split('/')[path.split('/').length - (a.path.includes(':key') ? 1 : 0)], '');
 
@@ -199,6 +202,12 @@ class Component {
     }
 
     return action || {};
+  }
+
+  getStateByKey(key) {
+    return Object.assign({}, ...Object.keys(this.state).map(k => ({
+      [k]: this.state[k][key]
+    })));
   }
 
   setActions(action) {
@@ -291,8 +300,6 @@ const ƒ = {
     didDelete(params) {}
 
     didGet(params) {}
-
-    didPost(params) {}
 
     didPut(params) {}
 
