@@ -1,4 +1,5 @@
 const { ƒ } = require('../../..');
+const { AnalyticsSettings } = require('../actions/AnalyticsSettings');
 const { Dashboard } = require('../actions/Dashboard');
 const { Ping } = require('../actions/Ping');
 const { User } = require('../actions/User');
@@ -22,6 +23,7 @@ class Node extends ƒ.Node {
     this.setActions([
       new Ping('/'),
       new Dashboard('/dashboard'),
+      new AnalyticsSettings('/dashboard/analytics/enable/:key'),
       new User('/user/:key')
     ]);
   }

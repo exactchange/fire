@@ -21,7 +21,6 @@ const runTests = async () => {
       },
       {
         tipOfTheDay: 'Press ESC to enter distraction-free mode.',
-        isEnabled: {},
         status: 200
       }
     );

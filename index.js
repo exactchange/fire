@@ -26,10 +26,10 @@ const {
 const NodeExpressApi = require('node-express-api');
 
 class HttpApi extends NodeExpressApi {
-  static _200(res, state) {
+  static _200(res, body) {
     console.log(`\x1b[32m<< ${new Date().toString()} >> Sent (200 Response).\x1b[0m`);
 
-    return res.status(200).json(state);
+    return res.status(200).json(body);
   }
 
   static _400(res) {
@@ -93,9 +93,9 @@ class HttpApi extends NodeExpressApi {
 
     switch (state.status) {
       case 200:
-        await action.didDelete(body);
+        const result = await action.didDelete(body);
 
-        return HttpApi._200(res, state);
+        return HttpApi._200(res, result || state);
       case 400:
         return HttpApi._400(res);
       case 404:
@@ -114,9 +114,12 @@ class HttpApi extends NodeExpressApi {
 
     switch (state.status) {
       case 200:
-        await action.didGet(params);
+        const result = await action.didGet(params);
 
-        return HttpApi._200(res, state);
+        console.log('result', result);
+        console.log('state', state);
+
+        return HttpApi._200(res, result || state);
       case 404:
         return HttpApi._404(res);
       default:
@@ -137,9 +140,9 @@ class HttpApi extends NodeExpressApi {
 
     switch (state.status) {
       case 200:
-        await action.didPut(body);
+        const result = await action.didPut(body);
 
-        return HttpApi._200(res, state);
+        return HttpApi._200(res, result || state);
       case 400:
         return HttpApi._400(res);
       case 404:
@@ -185,21 +188,6 @@ class Component {
     const routes = this.actions.map(a => a.path);
     const matchedRoutes = routes.filter(r => route.match(r.split(':')[0]));
     let action = this.actions.filter(a => a.path.split(':')[0] === route)[0];
-
-    if (!action) {
-      const p = path.split('/');
-
-      p.splice(2);
-
-      const parentPath = p.join('/');
-
-      action = parentPath && this.getAction(parentPath) && this.getAction(parentPath).actions.find(a => {
-        const actionPath = a.path.replace(':key', '');
-        const requestPath = path.replace(path.split('/')[path.split('/').length - (a.path.includes(':key') ? 1 : 0)], '');
-
-        return actionPath === requestPath;
-      });
-    }
 
     return action || {};
   }
@@ -544,7 +532,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.1.1'
+  version: '1.1.2'
 };
 
 /*

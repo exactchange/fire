@@ -1,5 +1,4 @@
 const { ƒ } = require('../../..');
-const { AnalyticsSettings } = require('./AnalyticsSettings');
 
 /*
  * Dashboard
@@ -18,8 +17,6 @@ class Dashboard extends ƒ.Action {
     });
 
     this.setReadWriteDelete(true, false, false);
-
-    this.setActions(new AnalyticsSettings(`${path}/analytics/enable/:key`));
   }
 
   didGet(params) {
