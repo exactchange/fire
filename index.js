@@ -116,9 +116,6 @@ class HttpApi extends NodeExpressApi {
       case 200:
         const result = await action.didGet(params);
 
-        console.log('result', result);
-        console.log('state', state);
-
         return HttpApi._200(res, result || state);
       case 404:
         return HttpApi._404(res);
@@ -532,7 +529,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.1.2'
+  version: '1.1.3'
 };
 
 /*
