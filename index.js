@@ -89,6 +89,8 @@ class HttpApi extends NodeExpressApi {
     const path = params[0];
     const action = this.getAction(path);
 
+    body.key = path.replace(action.path.replace(':key', ''), '');
+
     const state = await this.willDelete(action, params, body);
 
     switch (state.status) {
@@ -106,15 +108,17 @@ class HttpApi extends NodeExpressApi {
   }
 
   async onGet(req, res) {
-    const { params } = req;
+    const { body, params } = req;
     const path = params[0];
     const action = this.getAction(path);
 
-    const state = await this.willGet(action, params);
+    body.key = path.replace(action.path.replace(':key', ''), '');
+
+    const state = await this.willGet(action, params, body);
 
     switch (state.status) {
       case 200:
-        const result = await action.didGet(params);
+        const result = await action.didGet(body);
 
         return HttpApi._200(res, result || state);
       case 404:
@@ -132,6 +136,8 @@ class HttpApi extends NodeExpressApi {
     const { body, params } = req;
     const path = params[0];
     const action = this.getAction(path);
+
+    body.key = path.replace(action.path.replace(':key', ''), '');
 
     const state = await this.willPut(action, params, body);
 
@@ -529,7 +535,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.1.3'
+  version: '1.1.4'
 };
 
 /*

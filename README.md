@@ -1,4 +1,4 @@
-# Fire (ƒ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/exactchange/fire/blob/master/LICENSE) [![npm version](https://img.shields.io/badge/npm-v1.1.3-brightgreen)](https://www.npmjs.com/package/fire-backend)
+# Fire (ƒ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/exactchange/fire/blob/master/LICENSE) [![npm version](https://img.shields.io/badge/npm-v1.1.4-brightgreen)](https://www.npmjs.com/package/fire-backend)
 
 Fire is a library for backend JavaScript.
 
@@ -8,9 +8,30 @@ Fire is a library for backend JavaScript.
 
 * **Use Everywhere:** Fire doesn't make assumptions about your application's front-end, so you can develop new features in Fire with your existing front-end code. Fire can also be used along-side many other Fire Nodes in a service network, sharing state information while retaining a single source of truth.
 
-## Installation
+## API-only installation
 
-Install MongoDB:
+Install Fire:
+```
+npm install fire-backend
+```
+
+#### Run an example project:
+```
+cd examples/todo-list-api
+npm install
+npm start
+```
+
+#### API-only flag
+
+To run any Fire project without a database, append the npm `start` script with:
+```
+--skip-db
+```
+
+## Database installation
+
+#### Install MongoDB:
 ```
 brew install mongodb
 ```
@@ -25,11 +46,6 @@ Ensure write permissions to `/data/db`:
 ```
 sudo chown -R `id -un` /data/db
 # Enter your password
-```
-
-Install Fire:
-```
-npm install fire-backend
 ```
 
 #### Run an example project:
@@ -51,13 +67,6 @@ To run a project with a different version of the database, append the npm `start
 dbVersion=2
 ```
 and a new instance of the state-database will be created on node start. Easily switch between versions using the `dbVersion` flag, with any version name you like as the value.
-
-#### API only
-
-To run a project without a database, append the npm `start` script with:
-```
---skip-db
-```
 
 ## Documentation
 

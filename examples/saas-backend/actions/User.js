@@ -15,15 +15,15 @@ class User extends ƒ.Action {
     });
   }
 
-  didDelete(params) {
+  didDelete(body) {
     // do stuff after data was deleted
   }
 
-  didGet(params) {
+  didGet(body) {
     // do stuff after data was retrieved
   }
 
-  didPut(params) {
+  didPut(body) {
     // do stuff after data was saved
   }
 }

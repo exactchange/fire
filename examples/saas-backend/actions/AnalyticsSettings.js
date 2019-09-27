@@ -15,9 +15,9 @@ class AnalyticsSettings extends ƒ.Action {
     this.setReadWriteDelete(true, true, false);
   }
 
-  didPut(params) {
-    if (params.isEnabled === true || params.isEnabled === false) {
-      console.log(`A user ${params.isEnabled ? 'enabled' : 'disabled'} analytics.`);
+  didPut(body) {
+    if (body.isEnabled === true || body.isEnabled === false) {
+      console.log(`A user ${body.isEnabled ? 'enabled' : 'disabled'} analytics.`);
     }
   }
 }

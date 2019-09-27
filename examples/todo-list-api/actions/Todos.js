@@ -21,15 +21,15 @@ class Todos extends ƒ.Action {
     });
   }
 
-  didDelete(params) {
+  didDelete(body) {
     // do stuff after data was deleted
   }
 
-  didGet(params) {
+  didGet(body) {
     console.log('A user retrieved todos.');
   }
 
-  didPut(params) {
+  didPut(body) {
     // do stuff after data was saved
   }
 }

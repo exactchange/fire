@@ -19,7 +19,7 @@ class Ping extends ƒ.Action {
     this.setReadWriteDelete(true, false, false);
   }
 
-  didGet(params) {
+  didGet(body) {
     console.log(`Ping! Responded with ${this.state.message}`);
   }
 }

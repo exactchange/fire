@@ -19,7 +19,7 @@ class Dashboard extends ƒ.Action {
     this.setReadWriteDelete(true, false, false);
   }
 
-  didGet(params) {
+  didGet(body) {
     console.log('A user retrieved the Dashboard state.');
   }
 }
