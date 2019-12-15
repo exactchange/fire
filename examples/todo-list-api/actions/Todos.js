@@ -9,10 +9,12 @@ class Todos extends ƒ.Action {
     super(path);
 
     this.setShape({
+      route: ƒ.Type.String,
       todos: ƒ.Type.Array
     });
 
     this.setState({
+      route: '/todos',
       todos: [
         { title: 'Go to the gym', isComplete: false },
         { title: 'Finish work presentation', isComplete: false },

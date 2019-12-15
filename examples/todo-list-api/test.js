@@ -20,6 +20,7 @@ const runTests = async () => {
         url: 'http://localhost:1337/todos'
       },
       {
+        route: '/todos',
         todos: [
           { title: 'Go to the gym', isComplete: false },
           { title: 'Finish work presentation', isComplete: false },
