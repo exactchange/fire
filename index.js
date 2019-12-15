@@ -77,7 +77,7 @@ class HttpApi extends NodeExpressApi {
     const requests = [
       { type: 'delete', path: '*', handler: 'onDelete' },
       { type: 'get', path: '*', handler: 'onGet' },
-      { type: 'post', path: '*', handler: 'onPost' },
+      { type: 'post', path: '*', handler: 'onPut' },
       { type: 'put', path: '*', handler: 'onPut' }
     ];
 
@@ -89,7 +89,9 @@ class HttpApi extends NodeExpressApi {
     const path = params[0];
     const action = this.getAction(path);
 
-    body.key = path.replace(action.path.replace(':key', ''), '');
+    if (action.path.includes(':key')) {
+      body.key = path.replace(action.path.replace(':key', ''), '');
+    }
 
     const state = await this.willDelete(action, params, body);
 
@@ -112,7 +114,9 @@ class HttpApi extends NodeExpressApi {
     const path = params[0];
     const action = this.getAction(path);
 
-    body.key = path.replace(action.path.replace(':key', ''), '');
+    if (action.path.includes(':key')) {
+      body.key = path.replace(action.path.replace(':key', ''), '');
+    }
 
     const state = await this.willGet(action, params, body);
 
@@ -128,16 +132,15 @@ class HttpApi extends NodeExpressApi {
     }
   }
 
-  async onPost(req, res) {
-    this.onPut(req, res);
-  }
-
   async onPut(req, res) {
-    const { body, params } = req;
+    const body = req;
+    const { params } = res.req;
     const path = params[0];
     const action = this.getAction(path);
 
-    body.key = path.replace(action.path.replace(':key', ''), '');
+    if (action.path.includes(':key')) {
+      body.key = path.replace(action.path.replace(':key', ''), '');
+    }
 
     const state = await this.willPut(action, params, body);
 
@@ -329,7 +332,6 @@ const ƒ = {
 
       httpApi.onDelete = httpApi.onDelete.bind(this);
       httpApi.onGet = httpApi.onGet.bind(this);
-      httpApi.onPost = httpApi.onPost.bind(this);
       httpApi.onPut = httpApi.onPut.bind(this);
 
       ƒ.root.getNode = () => this;
@@ -535,7 +537,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.1.4'
+  version: '1.1.6'
 };
 
 /*
