@@ -1,4 +1,4 @@
-# Fire (ƒ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/exactchange/fire/blob/master/LICENSE) [![npm version](https://img.shields.io/badge/npm-v1.1.7-brightgreen)](https://www.npmjs.com/package/fire-backend)
+# Fire (ƒ) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/exactchange/fire/blob/master/LICENSE) [![npm version](https://img.shields.io/badge/npm-v1.1.8-brightgreen)](https://www.npmjs.com/package/fire-backend)
 
 Fire is a library for backend JavaScript.
 

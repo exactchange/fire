@@ -89,10 +89,6 @@ class HttpApi extends NodeExpressApi {
     const path = params[0];
     const action = this.getAction(path);
 
-    if (!action.path) {
-      return HttpApi._404(res);
-    }
-
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
     }
@@ -118,10 +114,6 @@ class HttpApi extends NodeExpressApi {
     const path = params[0];
     const action = this.getAction(path);
 
-    if (!action.path) {
-      return HttpApi._404(res);
-    }
-
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
     }
@@ -141,14 +133,10 @@ class HttpApi extends NodeExpressApi {
   }
 
   async onPut(req, res) {
-    const body = req;
+    const { body } = req;
     const { params } = res.req;
     const path = params[0];
     const action = this.getAction(path);
-
-    if (!action.path) {
-      return HttpApi._404(res);
-    }
 
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
@@ -364,10 +352,7 @@ const ƒ = {
       }
 
       this.__db = await client.db('firedb');
-
-      console.log(`\x1b[32m<< ${date} >> MongoDB Node driver v${this.db.serverConfig.clientInfo.driver.version} is running on ${this.db.serverConfig.clientInfo.platform} (V8).\x1b[0m`);
-      console.log(`\x1b[32m<< ${date} >> Connected to "${this.db.databaseName}".\x1b[0m`);
-      ƒ.system.mongo.nodeVersion = this.db.serverConfig.clientInfo.platform;
+      console.log(`\x1b[32m<< ${date} >> Connected to MongoDB database "${this.db.databaseName}".\x1b[0m`);
 
       const { dbVersion } = this.state;
       const collection = await this.db.collection('state');
@@ -540,16 +525,13 @@ const ƒ = {
       version: v8
     },
     language: LANG,
-    mongo: {
-      nodeVersion: ''
-    },
     node: {
       bindings: moduleLoadList.map(m => m.match('Binding') && m.replace(/Binding /gi, '')).filter(m => m),
       modules: moduleLoadList.map(m => m.match('NativeComponent') && m.replace(/NativeComponent /gi, '')).filter(m => m),
       version
     }
   },
-  version: '1.1.7'
+  version: '1.1.8'
 };
 
 /*
