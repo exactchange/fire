@@ -74,7 +74,7 @@ Coming soon
 
 #### The Functional Loop
 
-![Functional Loop](https://drive.google.com/uc?export=download&id=1-1g_VoyYBXoipT5A7AZWAK39JeOhvL3u)
+![Functional Loop](https://drive.google.com/uc?export=view&id=1-1g_VoyYBXoipT5A7AZWAK39JeOhvL3u)
 
 ## [Examples](https://github.com/exactchange/fire/tree/master/examples)
 
