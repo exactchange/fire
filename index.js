@@ -89,6 +89,10 @@ class HttpApi extends NodeExpressApi {
     const path = params[0];
     const action = this.getAction(path);
 
+    if (!action.path) {
+      return HttpApi._404(res);
+    }
+
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
     }
@@ -114,6 +118,10 @@ class HttpApi extends NodeExpressApi {
     const path = params[0];
     const action = this.getAction(path);
 
+    if (!action.path) {
+      return HttpApi._404(res);
+    }
+
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
     }
@@ -137,6 +145,10 @@ class HttpApi extends NodeExpressApi {
     const { params } = res.req;
     const path = params[0];
     const action = this.getAction(path);
+
+    if (!action.path) {
+      return HttpApi._404(res);
+    }
 
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
@@ -537,7 +549,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.1.6'
+  version: '1.1.7'
 };
 
 /*
