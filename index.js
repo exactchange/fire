@@ -531,7 +531,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.1.8'
+  version: '1.1.9'
 };
 
 /*
