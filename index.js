@@ -112,6 +112,11 @@ class HttpApi extends NodeExpressApi {
   async onGet(req, res) {
     const { body, params } = req;
     const path = params[0];
+
+    if (path.match('favicon')) {
+      return false;
+    }
+
     const action = this.getAction(path);
 
     if (action.path.includes(':key')) {
