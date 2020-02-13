@@ -315,7 +315,7 @@ const ƒ = {
     }
   },
   Node: class extends Component {
-    constructor() {
+    constructor(connectionString) {
       super();
 
       const { version } = ƒ.system.node;
@@ -323,13 +323,16 @@ const ƒ = {
       const httpApi = new HttpApi(startMessage);
 
       if (ƒ.root.args.join('').match('--skip-db') == null) {
-        const mongoClient = require('mongodb').MongoClient;
+        const { MongoClient } = require('mongodb');
+
         const mongoOptions = {
           useNewUrlParser: true,
           useUnifiedTopology: true
         };
 
-        mongoClient.connect('mongodb://localhost:27017', mongoOptions, (...args) => this.databaseDidConnect(...args));
+        const mongoClient = new MongoClient(connectionString || 'mongodb://localhost:27017', mongoOptions);
+
+        mongoClient.connect(error => this.databaseDidConnect(error, mongoClient));
       }
       else {
         console.log(`\x1b[33m<< ${new Date().toString()} >> With flags: "--skip-db"\x1b[0m`);
@@ -536,7 +539,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.2.1'
+  version: '1.2.2'
 };
 
 /*
