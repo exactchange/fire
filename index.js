@@ -264,8 +264,8 @@ class Component {
           const version = ƒ.root.getNode().state.dbVersion;
           const collection = await ƒ.root.getNode().db.collection('state');
 
-          collection.updateOne(
-            { version },
+          await collection.updateOne(
+            { version: {} },
             { $set: { state: appState } }
           );
 
@@ -386,7 +386,7 @@ const ƒ = {
             console.log(`\x1b[31m${e}\x1b[0m`);
           };
 
-          client.close();
+          // client.close();
         });
       }
       else {
@@ -539,7 +539,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.2.2'
+  version: '1.2.3'
 };
 
 /*
