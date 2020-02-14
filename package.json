@@ -2,7 +2,7 @@
   "name": "fire-backend",
   "author": "@exactchange",
   "description": "A declarative, efficient, and flexible library for backend JavaScript.",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "dependencies": {
     "mongodb": "^3.3.1",
     "node-express-api": "^1.1.3"

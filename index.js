@@ -87,7 +87,12 @@ class HttpApi extends NodeExpressApi {
   async onDelete(req, res) {
     const { body, params } = req;
     const path = params[0];
-    const action = this.getAction(path);
+
+    if (!path) {
+      return false;
+    }
+
+    const action = this.getAction(path) || {};
 
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
@@ -97,9 +102,9 @@ class HttpApi extends NodeExpressApi {
 
     switch (state.status) {
       case 200:
-        const result = await action.didDelete(body);
+        const response = await action.didDelete(body);
 
-        return HttpApi._200(res, result || state);
+        return HttpApi._200(res, response || state);
       case 400:
         return HttpApi._400(res);
       case 404:
@@ -110,14 +115,40 @@ class HttpApi extends NodeExpressApi {
   }
 
   async onGet(req, res) {
-    const { body, params } = req;
+    const { body, params, query } = req;
     const path = params[0];
 
-    if (path.match('favicon')) {
+    if (!path || path.match('favicon')) {
       return false;
     }
+    else {
+      if (path === '/query') {
+        try {
+          let result = [];
 
-    const action = this.getAction(path);
+          Object.keys(query).forEach(k => {
+            if (k === '*') {
+              const truthKey = Object.keys(ƒ.root.getNode().state).sort((a, b) => Object.keys(a).length > Object.keys(b).length)[0];
+
+              result = Object.keys(ƒ.root.getNode().state[truthKey]).map(p => Object.assign({}, ƒ.root.getNode().getStateByKey(p), {}));
+            }
+            else {
+              const stateByKey = Object.assign({}, ƒ.root.getNode().getStateByKey(k), {});
+
+              result.push(stateByKey);
+            }
+          });
+
+          return HttpApi._200(res, result || []);
+        } catch(e) {
+          console.log(`\x1b[31m<< ${new Date().toString()} >> Bad query.\x1b[0m`, e);
+
+          return HttpApi._500(res);
+        }
+      }
+    }
+
+    const action = this.getAction(path) || {};
 
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
@@ -127,9 +158,9 @@ class HttpApi extends NodeExpressApi {
 
     switch (state.status) {
       case 200:
-        const result = await action.didGet(body);
+        const response = await action.didGet(body);
 
-        return HttpApi._200(res, result || state);
+        return HttpApi._200(res, response || state);
       case 404:
         return HttpApi._404(res);
       default:
@@ -141,7 +172,12 @@ class HttpApi extends NodeExpressApi {
     const { body } = req;
     const { params } = res.req;
     const path = params[0];
-    const action = this.getAction(path);
+
+    if (!path) {
+      return false;
+    }
+
+    const action = this.getAction(path) || {};
 
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
@@ -151,9 +187,9 @@ class HttpApi extends NodeExpressApi {
 
     switch (state.status) {
       case 200:
-        const result = await action.didPut(body);
+        const response = await action.didPut(body);
 
-        return HttpApi._200(res, result || state);
+        return HttpApi._200(res, response || state);
       case 400:
         return HttpApi._400(res);
       case 404:
@@ -197,7 +233,9 @@ class Component {
     const p = isTopLevel ? path : path.split('/');
     const route = isTopLevel ? path : path.split(p[p.length - 1])[0];
     const routes = this.actions.map(a => a.path);
-    const matchedRoutes = routes.filter(r => route.match(r.split(':')[0]));
+
+    console.log(action);
+
     let action = this.actions.filter(a => a.path.split(':')[0] === route)[0];
 
     return action || {};
@@ -539,7 +577,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.2.3'
+  version: '1.2.4'
 };
 
 /*
