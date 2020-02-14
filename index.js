@@ -87,12 +87,11 @@ class HttpApi extends NodeExpressApi {
   async onDelete(req, res) {
     const { body, params } = req;
     const path = params[0];
+    const action = this.getAction(path);
 
-    if (!path) {
-      return false;
+    if (!path || !action) {
+      return HttpApi._404(res);
     }
-
-    const action = this.getAction(path) || {};
 
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
@@ -118,37 +117,36 @@ class HttpApi extends NodeExpressApi {
     const { body, params, query } = req;
     const path = params[0];
 
-    if (!path || path.match('favicon')) {
-      return false;
-    }
-    else {
-      if (path === '/query') {
-        try {
-          let result = [];
+    if (path && path === '/query') {
+      try {
+        let result = [];
 
-          Object.keys(query).forEach(k => {
-            if (k === '*') {
-              const truthKey = Object.keys(ƒ.root.getNode().state).sort((a, b) => Object.keys(a).length > Object.keys(b).length)[0];
+        Object.keys(query).forEach(k => {
+          if (k === '*') {
+            const truthKey = Object.keys(ƒ.root.getNode().state).sort((a, b) => Object.keys(a).length > Object.keys(b).length)[0];
 
-              result = Object.keys(ƒ.root.getNode().state[truthKey]).map(p => Object.assign({}, ƒ.root.getNode().getStateByKey(p), {}));
-            }
-            else {
-              const stateByKey = Object.assign({}, ƒ.root.getNode().getStateByKey(k), {});
+            result = Object.keys(ƒ.root.getNode().state[truthKey]).map(p => Object.assign({}, ƒ.root.getNode().getStateByKey(p), {}));
+          }
+          else {
+            const stateByKey = Object.assign({}, ƒ.root.getNode().getStateByKey(k), {});
 
-              result.push(stateByKey);
-            }
-          });
+            result.push(stateByKey);
+          }
+        });
 
-          return HttpApi._200(res, result || []);
-        } catch(e) {
-          console.log(`\x1b[31m<< ${new Date().toString()} >> Bad query.\x1b[0m`, e);
+        return HttpApi._200(res, result || []);
+      } catch(e) {
+        console.log(`\x1b[31m<< ${new Date().toString()} >> Bad query.\x1b[0m`, e);
 
-          return HttpApi._500(res);
-        }
+        return HttpApi._500(res);
       }
     }
 
-    const action = this.getAction(path) || {};
+    const action = this.getAction(path);
+
+    if (!path || !action) {
+      return HttpApi._404(res);
+    }
 
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
@@ -172,12 +170,11 @@ class HttpApi extends NodeExpressApi {
     const { body } = req;
     const { params } = res.req;
     const path = params[0];
+    const action = this.getAction(path);
 
-    if (!path) {
-      return false;
+    if (!path || !action) {
+      return HttpApi._404(res);
     }
-
-    const action = this.getAction(path) || {};
 
     if (action.path.includes(':key')) {
       body.key = path.replace(action.path.replace(':key', ''), '');
@@ -234,11 +231,9 @@ class Component {
     const route = isTopLevel ? path : path.split(p[p.length - 1])[0];
     const routes = this.actions.map(a => a.path);
 
-    console.log(action);
-
     let action = this.actions.filter(a => a.path.split(':')[0] === route)[0];
 
-    return action || {};
+    return action;
   }
 
   getStateByKey(key) {
@@ -577,7 +572,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.2.4'
+  version: '1.2.5'
 };
 
 /*
