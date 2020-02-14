@@ -121,16 +121,20 @@ class HttpApi extends NodeExpressApi {
       try {
         let result = [];
 
+        const pushStateKey = key => {
+          const stateByKey = Object.assign({}, ƒ.root.getNode().getStateByKey(key), {});
+
+          result.push(stateByKey);
+        };
+
         Object.keys(query).forEach(k => {
           if (k === '*') {
-            const truthKey = Object.keys(ƒ.root.getNode().state).sort((a, b) => Object.keys(a).length > Object.keys(b).length)[0];
+            const truthKey = Object.keys(ƒ.root.getNode().state).sort((a, b) => Object.keys(a).length > Object.keys(b).length ? 1 : -1)[0];
 
-            result = Object.keys(ƒ.root.getNode().state[truthKey]).map(p => Object.assign({}, ƒ.root.getNode().getStateByKey(p), {}));
+            Object.keys(ƒ.root.getNode().state[truthKey]).forEach(y => pushStateKey(y));
           }
           else {
-            const stateByKey = Object.assign({}, ƒ.root.getNode().getStateByKey(k), {});
-
-            result.push(stateByKey);
+            pushStateKey(k);
           }
         });
 
@@ -572,7 +576,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.2.5'
+  version: '1.2.6'
 };
 
 /*
