@@ -124,7 +124,12 @@ class HttpApi extends NodeExpressApi {
         const pushStateKey = key => {
           const stateByKey = Object.assign({}, ƒ.root.getNode().getStateByKey(key), {});
 
-          result.push(stateByKey);
+          if (stateByKey) {
+            result.push(stateByKey);
+          }
+          else {
+            console.log(`\x1b[31m<< ${new Date().toString()} >> Bad query.\x1b[0m`, e);
+          }
         };
 
         Object.keys(query).forEach(k => {
@@ -134,11 +139,29 @@ class HttpApi extends NodeExpressApi {
             Object.keys(ƒ.root.getNode().state[truthKey]).forEach(y => pushStateKey(y));
           }
           else {
-            pushStateKey(k);
+            if (k !== '&') {
+              pushStateKey(k);
+            }
           }
         });
 
-        return HttpApi._200(res, result || []);
+        const options = JSON.parse(query['&']) || { page: 0, limit: result.length };
+        const { limit, page } = options;
+
+        const resultChunked = [[]];
+        let j = 1;
+
+        result.forEach((r, i) => {
+          if (j++ > limit) {
+            resultChunked.push([r]);
+            j = 1;
+          }
+          else {
+            resultChunked[resultChunked.length - 1].push(r);
+          }
+        });
+
+        return HttpApi._200(res, resultChunked[page]);
       } catch(e) {
         console.log(`\x1b[31m<< ${new Date().toString()} >> Bad query.\x1b[0m`, e);
 
@@ -230,14 +253,12 @@ class Component {
   }
 
   getAction(path) {
+    const { actions } = this;
     const isTopLevel = (path.match(/\//gi).length === 1);
     const p = isTopLevel ? path : path.split('/');
     const route = isTopLevel ? path : path.split(p[p.length - 1])[0];
-    const routes = this.actions.map(a => a.path);
 
-    let action = this.actions.filter(a => a.path.split(':')[0] === route)[0];
-
-    return action;
+    return actions.length && actions.filter(a => a.path.split(':')[0] === route)[0];
   }
 
   getStateByKey(key) {
@@ -576,7 +597,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.2.6'
+  version: '1.2.7'
 };
 
 /*
