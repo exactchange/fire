@@ -121,45 +121,67 @@ class HttpApi extends NodeExpressApi {
       try {
         let result = [];
 
-        const pushStateKey = key => {
-          const stateByKey = Object.assign({}, ƒ.root.getNode().getStateByKey(key), {});
-
-          if (stateByKey) {
-            result.push(stateByKey);
-          }
-          else {
-            console.log(`\x1b[31m<< ${new Date().toString()} >> Bad query.\x1b[0m`, e);
-          }
-        };
-
         Object.keys(query).forEach(k => {
+          const q = JSON.parse(query[k]);
+
           if (k === '*') {
             const truthKey = Object.keys(ƒ.root.getNode().state).sort((a, b) => Object.keys(a).length > Object.keys(b).length ? 1 : -1)[0];
 
-            Object.keys(ƒ.root.getNode().state[truthKey]).forEach(y => pushStateKey(y));
+            result = Object.keys(ƒ.root.getNode().state[truthKey]).map(key => {
+              const stateByKey = Object.assign({}, ƒ.root.getNode().getStateByKey(key), {});
+
+              if (!stateByKey) {
+                console.log(`\x1b[31m<< ${new Date().toString()} >> Bad query.\x1b[0m`, e);
+              }
+
+              let resultItem = Object.assign({}, stateByKey, {});
+
+              Object.keys(resultItem).forEach(p => {
+                if (!Object.keys(q).includes(p)) {
+                  delete resultItem[p];
+                }
+                else {
+                  if (!(q[p] === '*' || (
+                    q[p][0] &&
+                    q[p][1] &&
+                    resultItem[p] &&
+                    resultItem[p][0] &&
+                    resultItem[p][1] &&
+                    resultItem[p][0].toLowerCase() === q[p][0].toLowerCase() &&
+                    resultItem[p][1].toLowerCase() === q[p][1].toLowerCase() &&
+                    resultItem[p].toLowerCase().match(q[p].toLowerCase())
+                  ))) {
+                    resultItem = false;
+                  }
+                }
+              });
+
+              return resultItem;
+            }).filter(Boolean);
           }
           else {
-            if (k !== '&') {
-              pushStateKey(k);
-            }
+            // handle namespaced search
           }
         });
 
         const options = JSON.parse(query['&']) || { page: 0, limit: result.length };
         const { limit, page } = options;
 
-        const resultChunked = [[]];
-        let j = 1;
+        const resultChunked = result.length < limit ? [result] : [[]];
 
-        result.forEach((r, i) => {
-          if (j++ > limit) {
-            resultChunked.push([r]);
-            j = 1;
-          }
-          else {
-            resultChunked[resultChunked.length - 1].push(r);
-          }
-        });
+        if (result.length > limit) {
+          let j = 1;
+
+          result.forEach((r, i) => {
+            if (j++ > limit) {
+              resultChunked.push([r]);
+              j = 1;
+            }
+            else {
+              resultChunked[resultChunked.length - 1].push(r);
+            }
+          });
+        }
 
         return HttpApi._200(res, resultChunked[page]);
       } catch(e) {
@@ -597,7 +619,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.2.7'
+  version: '1.2.8'
 };
 
 /*
