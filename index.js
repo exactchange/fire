@@ -143,12 +143,9 @@ class HttpApi extends NodeExpressApi {
                 else {
                   if (!(q[p] === '*' || (
                     q[p][0] &&
-                    q[p][1] &&
                     resultItem[p] &&
                     resultItem[p][0] &&
-                    resultItem[p][1] &&
                     resultItem[p][0].toLowerCase() === q[p][0].toLowerCase() &&
-                    resultItem[p][1].toLowerCase() === q[p][1].toLowerCase() &&
                     resultItem[p].toLowerCase().match(q[p].toLowerCase())
                   ))) {
                     resultItem = false;
@@ -623,7 +620,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.2.9'
+  version: '1.3.0'
 };
 
 /*
