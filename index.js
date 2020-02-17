@@ -114,15 +114,22 @@ class HttpApi extends NodeExpressApi {
   }
 
   async onGet(req, res) {
-    const { body, params, query } = req;
+    const { body, params } = req;
     const path = params[0];
 
-    if (path && path === '/query') {
+    let { query } = req;
+    let isQueryString = Object.keys(query)[0] === 'querystring';
+
+    if (path && path === '/query' && Object.keys(query).length) {
+      if (isQueryString) {
+        query = JSON.parse(query.querystring);
+      }
+
       try {
         let result = [];
 
         Object.keys(query).forEach(k => {
-          const q = JSON.parse(query[k]);
+          const q = isQueryString ? query[k] : JSON.parse(query[k]);
 
           if (k === '*') {
             const truthKey = Object.keys(ƒ.root.getNode().state).sort((a, b) => Object.keys(a).length > Object.keys(b).length ? 1 : -1)[0];
@@ -161,7 +168,7 @@ class HttpApi extends NodeExpressApi {
           }
         });
 
-        const options = JSON.parse(query['&']) || { page: 0, limit: result.length };
+        const options = (isQueryString ? query['&'] : JSON.parse(query['&'])) || { page: 0, limit: 10, order: 'asc' };
         const { limit, order, page } = options;
 
         if (order === 'desc') {
@@ -620,7 +627,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.3.0'
+  version: '1.3.1'
 };
 
 /*
