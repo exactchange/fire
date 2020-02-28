@@ -168,8 +168,10 @@ class HttpApi extends NodeExpressApi {
           }
         });
 
-        const options = (isQueryString ? query['&'] : JSON.parse(query['&'])) || { page: 0, limit: 10, order: 'asc' };
-        const { limit, order, page } = options;
+        const options = isQueryString ? query['&'] : JSON.parse(query['&']);
+        const page = options.page || 0;
+        const limit = options.limit || 10;
+        const order = options.order || 'asc';
 
         if (order === 'desc') {
           result = result.reverse();
@@ -627,7 +629,7 @@ const ƒ = {
       version
     }
   },
-  version: '1.3.1'
+  version: '1.3.2'
 };
 
 /*
